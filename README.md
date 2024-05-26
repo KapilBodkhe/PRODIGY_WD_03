@@ -1,7 +1,7 @@
 ## ❌ Tic-Tac-Toe ⭕
 Developed a tic-tac-toe web application by using HTML, CSS, and JavaScript. By implementing functions to handle user clicks, track game state, and check for winning conditions, I created an interactive and engaging tic-tac-toe game. With these technologies and functionalities, users can play against each other or against an AI opponent, aiming to get three markers in a row to win the game.
 
-<a href="https://kapilbodkhe.github.io/PRODIGY_WD_04/" target="_blank">**Visit Now** 🚀</a>
+<a href="https://kapilbodkhe.github.io/PRODIGY_WD_03/" target="_blank">**Visit Now** 🚀</a>
 
 ## 📌 Tech Stack Used
 ![HTML](https://img.shields.io/badge/html5%20-%23E34F26.svg?&style=for-the-badge&logo=html5&logoColor=white)
