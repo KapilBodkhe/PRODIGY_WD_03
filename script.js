@@ -1,72 +1,150 @@
-let playerText = document.getElementById('playerText')
-let restartBtn = document.getElementById('restartBtn')
-let boxes = Array.from(document.getElementsByClassName('box'))
+let playerText = document.getElementById('playerText');
+let restartBtn = document.getElementById('restartBtn');
+let boxes = Array.from(document.getElementsByClassName('box'));
 
-let winnerIndicator = getComputedStyle(document.body).getPropertyValue('--winning-blocks')
+let winnerIndicator = getComputedStyle(document.body).getPropertyValue('--winning-blocks');
 
-const O_TEXT = "O"
-const X_TEXT = "X"
-let currentPlayer = X_TEXT
-let spaces = Array(9).fill(null)
+const O_TEXT = "O";
+const X_TEXT = "X";
+let currentPlayer = X_TEXT;
+let spaces = Array(9).fill(null);
+let isAgainstAI = false;
 
-const startGame = () => {
-    boxes.forEach(box => box.addEventListener('click', boxClicked))
+document.getElementById('vsPlayerBtn').addEventListener('click', () => startGame(false));
+document.getElementById('vsAIBtn').addEventListener('click', () => startGame(true));
+
+function startGame(againstAI) {
+    isAgainstAI = againstAI;
+    document.querySelector('.selection-container').style.display = 'none';
+    document.querySelector('.container').style.display = 'flex';
+
+    boxes.forEach(box => box.addEventListener('click', boxClicked));
 }
 
 function boxClicked(e) {
-    const id = e.target.id
+    const id = e.target.id;
 
-    if(!spaces[id]){
-        spaces[id] = currentPlayer
-        e.target.innerText = currentPlayer
+    if (!spaces[id]) {
+        spaces[id] = currentPlayer;
+        e.target.innerText = currentPlayer;
 
-        if(playerHasWon() !==false){
-            playerText.innerHTML = `${currentPlayer} has won!`
-            let winning_blocks = playerHasWon()
+        if (playerHasWon() !== false) {
+            playerText.innerHTML = `${currentPlayer} has won!`;
+            let winning_blocks = playerHasWon();
 
-            winning_blocks.map( box => boxes[box].style.backgroundColor=winnerIndicator)
-            return
+            winning_blocks.map(box => boxes[box].style.backgroundColor = winnerIndicator);
+            return;
         }
 
-        currentPlayer = currentPlayer == X_TEXT ? O_TEXT : X_TEXT
+        currentPlayer = currentPlayer == X_TEXT ? O_TEXT : X_TEXT;
+        
+        if (isAgainstAI && currentPlayer === O_TEXT) {
+            aiMove();
+        }
     }
 }
 
 const winningCombos = [
-    [0,1,2],
-    [3,4,5],
-    [6,7,8],
-    [0,3,6],
-    [1,4,7],
-    [2,5,8],
-    [0,4,8],
-    [2,4,6]
-]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+];
 
 function playerHasWon() {
     for (const condition of winningCombos) {
-        let [a, b, c] = condition
+        let [a, b, c] = condition;
 
-        if(spaces[a] && (spaces[a] == spaces[b] && spaces[a] == spaces[c])) {
-            return [a,b,c]
+        if (spaces[a] && (spaces[a] == spaces[b] && spaces[a] == spaces[c])) {
+            return [a, b, c];
         }
     }
-    return false
+    return false;
 }
-
-restartBtn.addEventListener('click', restart)
 
 function restart() {
-    spaces.fill(null)
+    spaces.fill(null);
 
-    boxes.forEach( box => {
-        box.innerText = ''
-        box.style.backgroundColor=''
-    })
+    boxes.forEach(box => {
+        box.innerText = '';
+        box.style.backgroundColor = '';
+    });
 
-    playerText.innerHTML = 'Tic Tac Toe'
-
-    currentPlayer = X_TEXT
+    playerText.innerHTML = 'Tic Tac Toe';
+    currentPlayer = X_TEXT;
 }
 
-startGame()
+function aiMove() {
+    let bestScore = -Infinity;
+    let move;
+    for (let i = 0; i < spaces.length; i++) {
+        if (spaces[i] === null) {
+            spaces[i] = O_TEXT;
+            let score = minimax(spaces, 0, false);
+            spaces[i] = null;
+            if (score > bestScore) {
+                bestScore = score;
+                move = i;
+            }
+        }
+    }
+    spaces[move] = O_TEXT;
+    boxes[move].innerText = O_TEXT;
+
+    if (playerHasWon() !== false) {
+        playerText.innerHTML = `${O_TEXT} has won!`;
+        let winning_blocks = playerHasWon();
+
+        winning_blocks.map(box => boxes[box].style.backgroundColor = winnerIndicator);
+        return;
+    }
+
+    currentPlayer = X_TEXT;
+}
+
+const scores = {
+    O: 1,
+    X: -1,
+    tie: 0
+};
+
+function minimax(newSpaces, depth, isMaximizing) {
+    let result = playerHasWon();
+    if (result !== false) {
+        return scores[currentPlayer];
+    }
+
+    if (newSpaces.every(space => space !== null)) {
+        return scores['tie'];
+    }
+
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < newSpaces.length; i++) {
+            if (newSpaces[i] === null) {
+                newSpaces[i] = O_TEXT;
+                let score = minimax(newSpaces, depth + 1, false);
+                newSpaces[i] = null;
+                bestScore = Math.max(score, bestScore);
+            }
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < newSpaces.length; i++) {
+            if (newSpaces[i] === null) {
+                newSpaces[i] = X_TEXT;
+                let score = minimax(newSpaces, depth + 1, true);
+                newSpaces[i] = null;
+                bestScore = Math.min(score, bestScore);
+            }
+        }
+        return bestScore;
+    }
+}
+
+restartBtn.addEventListener('click', restart);
