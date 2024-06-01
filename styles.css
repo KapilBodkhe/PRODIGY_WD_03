@@ -1,4 +1,4 @@
-*{
+* {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
@@ -18,7 +18,7 @@ h1 {
     text-transform: uppercase;
 }
 
-.container {
+.selection-container, .container {
     padding: 40px;
     height: 100vh;
     display: flex;
@@ -34,6 +34,7 @@ h1 {
     flex-wrap: wrap;
     margin-top: 40px;
 }
+
 .box {
     height: 100px;
     width: 100px;
@@ -45,22 +46,27 @@ h1 {
     border-right: 2px solid;
     border-bottom: 2px solid;
 }
+
 .box:nth-child(3n) {
     border-right: none;
 }
+
 .box:nth-child(6) ~ .box {
     border-bottom: none;
-} 
+}
+
 button {
     padding: 10px 20px;
     border-radius: 10px;
     background-color: var(--orange);
     color: #333;
-    border-color: var(--orange);
+    border: none;
     font-size: 18px;
     transition: 200ms transform;
     font-weight: 600;
+    margin: 10px;
 }
+
 button:hover {
     cursor: pointer;
     transform: translateY(-2px);
